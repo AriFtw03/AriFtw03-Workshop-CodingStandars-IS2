@@ -11,8 +11,19 @@ class Student:
         self.honor_roll = False
         self.letter_grade ="F"
 
-    def add_grades(self, grade):
-        self.grades.append(grade)
+    def add_grade(self, grade):
+        """Adds a numeric grade between 0 and 100"""
+        try:
+            numeric_grade = float(grade)
+        except (ValueError, TypeError):
+            print(f"Error: '{grade}' is not valid number.")
+            return
+
+        if 0.0 <= numeric_grade <= 100.0:
+            self.grades.append(numeric_grade)
+            print(f"Grade {numeric_grade} added.")
+        else:
+            print(f"Error: Grade {numeric_grade} must be between 0 and 100.")
 
     def calc_average(self):
         t = 0
@@ -55,6 +66,18 @@ def main():
     print("--- Tetsing 2: Empty student ---")
     student_2 = Student("", "") 
     print(f"Registered: {student_2.name} (ID: {student_2.student_id})")
+
+    """Testing Req 2 & 6: Adding grades and validation"""
+    print("--- Creating student ---")
+    student = Student("A001", "Arianna Feijoo")
+    
+    print("\n--- Testing grades ---")
+    student.add_grade(95)       # Valid
+    student.add_grade(88.5)     # Valid
+    student.add_grade("Fifty")  # Invalid (graceful fail)
+    student.add_grade(150)      # Invalid (graceful fail)
+    
+    print(f"\nFinal grades: {student.grades}")
 
 if __name__ == "__main__":
     main()
