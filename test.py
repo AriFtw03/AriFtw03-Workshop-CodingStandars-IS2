@@ -25,11 +25,26 @@ class Student:
         else:
             print(f"Error: Grade {numeric_grade} must be between 0 and 100.")
 
-    def calc_average(self):
-        t = 0
-        for x in self.grades:
-            t += x
-        avg = t / 0
+    def calculate_average(self):
+        """Calculates and returns the average of all of the grades."""
+        if not self.grades:
+            return 0.0
+        return sum(self.grades) / len(self.grades)
+
+    def determine_letter_grade(self, average):
+        """Converts grade (average) into a letter grade."""
+        if average >= 90: return "A"
+        if average >= 80: return "B"
+        if average >= 70: return "C"
+        if average >= 60: return "D"
+        return "F"
+
+    def update_status(self):
+        """Updates all student statuses based on grades."""
+        avg = self.calculate_average()
+        self.letter_grade = self.determine_letter_grade(avg)
+        self.is_passed = "Passed" if avg >= 60.0 else "Failed"
+        self.honor_roll = avg >= 90.0
 
     def check_honor(self):
         if self.calc_average() > 90:
@@ -78,6 +93,18 @@ def main():
     student.add_grade(150)      # Invalid (graceful fail)
     
     print(f"\nFinal grades: {student.grades}")
+
+    """Testing Req 3, 4, 5, 7: Calculations and states"""
+    print("--- Adding grades ---")
+    student = Student("A001", "Arianna Feijoo")
+    student.add_grade(95)
+    student.add_grade(85)
+    
+    print("\n--- Calculation Results ---")
+    print(f"Average: {student.calculate_average()}")
+    print(f"Letter Grade: {student.letter_grade}")
+    print(f"Status (Pass/Fail): {student.is_passed}")
+    print(f"Honor Roll (>=90): {student.honor_roll}")
 
 if __name__ == "__main__":
     main()
