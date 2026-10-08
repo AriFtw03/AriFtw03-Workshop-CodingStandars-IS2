@@ -1,11 +1,18 @@
+"""
+Student Grade Management System
+"""
+
 class Student:
     """Represents a student with their respective details and grades."""
     def __init__(self, student_id: str, name:str):
         if not student_id or not name:
             print("Student ID and name cannot be empty.")
-
-        self.student_id = str(student_id).strip()
-        self.name = str(name).strip()
+            self.student_id = "Unknown"
+            self.name = "Unknown"
+        else:
+            self.student_id = str(student_id).strip()
+            self.name = str(name).strip()
+            
         self.grades = []
         self.is_passed = "Failed"
         self.honor_roll = False
@@ -22,6 +29,7 @@ class Student:
         if 0.0 <= numeric_grade <= 100.0:
             self.grades.append(numeric_grade)
             print(f"Grade {numeric_grade} added.")
+            self.update_status()
         else:
             print(f"Error: Grade {numeric_grade} must be between 0 and 100.")
 
@@ -46,31 +54,37 @@ class Student:
         self.is_passed = "Passed" if avg >= 60.0 else "Failed"
         self.honor_roll = avg >= 90.0
 
-    def check_honor(self):
-        if self.calc_average() > 90:
-            self.honor_roll = "yep"
+    def remove_grade_by_index(self, index: int):
+        """Removes a grade by its list index gracefully."""
+        try:
+            removed = self.grades.pop(index)
+            print(f"Success: Grade {removed} removed from index {index}.")
+            self.update_status()
+        except IndexError:
+            print(f"Error: Index {index} is out of bounds.")
 
-    def delete_grade(self, index):
-        del self.grades[index]
+    def remove_grade_by_value(self, value: float):
+        """Removes a grade by its specific numeric value gracefully."""
+        try:
+            self.grades.remove(value)
+            print(f"Success: Grade {value} removed.")
+            self.update_status()
+        except ValueError:
+            print(f"Error: Grade {value} does not exist.")
 
-    def report(self):  # broken format
-        print("ID: " + self.student_id)
-        print("Name is: " + self.name)
-        print("Grades Count: " + len(self.grades))
-        print("Final Grade = " + self.letter_grade)
+    def generate_report(self):
+        """Generates a formatted summary report for the student."""
+        avg = self.calculate_average()
+        print("\n--- Student Summary Report ---")
+        print(f"Student ID       : {self.student_id}")
+        print(f"Student Name     : {self.name}")
+        print(f"Number of Grades : {len(self.grades)}")
+        print(f"Average Grade    : {avg:.2f}")
+        print(f"Letter Grade     : {self.letter_grade}")
+        print(f"Pass/Fail Status : {self.is_passed}")
+        print(f"Honor Roll       : {self.honor_roll}")
+        print("------------------------------\n")
 
-
-def startrun():
-    a = Student("x", "")
-    a.add_grades(100)
-    a.add_grades("Fifty")  # broken
-    a.calc_average()
-    a.check_honor()
-    a.deleteGrade(5)  # IndexError
-    a.report()
-
-
-startrun()
 
 def main():
     """Testing Req 1: Student creation"""
@@ -80,7 +94,7 @@ def main():
     
     print("--- Tetsing 2: Empty student ---")
     student_2 = Student("", "") 
-    print(f"Registered: {student_2.name} (ID: {student_2.student_id})")
+    print(f"Registered: {student_2.name} (ID: {student_2.student_id})\n")
 
     """Testing Req 2 & 6: Adding grades and validation"""
     print("--- Creating student ---")
@@ -95,7 +109,7 @@ def main():
     print(f"\nFinal grades: {student.grades}")
 
     """Testing Req 3, 4, 5, 7: Calculations and states"""
-    print("--- Adding grades ---")
+    print("\n--- Adding grades ---")
     student = Student("A001", "Arianna Feijoo")
     student.add_grade(95)
     student.add_grade(85)
@@ -105,6 +119,20 @@ def main():
     print(f"Letter Grade: {student.letter_grade}")
     print(f"Status (Pass/Fail): {student.is_passed}")
     print(f"Honor Roll (>=90): {student.honor_roll}")
+    
+    """Testing Req 8: Removing grades"""
+    print("\n--- Testing graceful removal ---")
+    student.add_grade(60) 
+    print(f"Current grades: {student.grades}")
+    
+    student.remove_grade_by_index(0)    
+    student.remove_grade_by_value(60)   
+    student.remove_grade_by_index(10)   # Invalid index
+    student.remove_grade_by_value(100)  # Invalid value
+    
+    """Testing Req 9: Final Report"""
+    student.generate_report()
+
 
 if __name__ == "__main__":
     main()
